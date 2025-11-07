@@ -29,8 +29,39 @@ Se encarga de todo lo que se ve en pantalla(HTML).
 1 pieza más: el Router
 que es el encargado de registrar todas las URL's o Endpoints que soporta nuestra aplicación
 
+Router: encargado de registrar todas las url's o endpoints
+que soporta nuestra aplicación
+
 -npm i express-validator
 
 //Nest Resource Routing
 ("Enrutamiento de recursos anidados")
 es un patrón especialmente en API's RESTFUL
+
+-npm i morgan
+-npm i -D @types/morgan
+
+crear cuenta
+-los usuario deben ser únicos
+para crear cuenta se pide email del usuario
+-los password tienen que estar hasheados
+-una buena forma de llenarte de usuarios
+que no hacen nada es enviar una verficación al email.
+
+npm i bcrypt
+npm i -D @types/bcrypt
+(existen diferentes librerias para hashear password, bcrypt es la más común junto a crypto-js dice discontinuada)
+bcrypts.js(otra -ultima actualización hace 7 años)
+
+Token genera valor de 6 digitos:
+Math.floor(100000 + Math.random() \* 900000)
+
+mailtrap (no envía mails reales)
+Resend (envía mails reales)
+npm i nodemailer
+npm i -D @types/nodemailer
+
+npm i dotenv
+
+Algoritmo para iniciar sesión
+verificar si el usuario existe
