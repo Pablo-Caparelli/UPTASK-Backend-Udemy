@@ -4,9 +4,17 @@ import { ProjectController } from "../controllers/ProjectController";
 import { handleInputErrors } from "../middleware/validation";
 import { TaskController } from "../controllers/TaskController";
 import { projectExists } from "../middleware/project";
-import { taskBelongsToProject, tasksExists } from "../middleware/task";
+import {
+  hasAuthorization,
+  taskBelongsToProject,
+  tasksExists,
+} from "../middleware/task";
+import { authenticate } from "../middleware/auth";
+import { TeamMemberController } from "../controllers/TeamController";
 
 const router = Router();
+
+router.use(authenticate);
 
 router.post(
   "/",
@@ -60,6 +68,7 @@ router.param("projectId", projectExists);
 
 router.post(
   "/:projectId/tasks",
+  hasAuthorization,
   body("name").notEmpty().withMessage("El nombre de la tarea es Obligatorio"),
   body("description")
     .notEmpty()
@@ -82,6 +91,7 @@ router.get(
 
 router.put(
   "/:projectId/tasks/:taskId",
+  hasAuthorization,
   param("taskId").isMongoId().withMessage("ID no válido"),
   body("name").notEmpty().withMessage("El nombre de la tarea es Obligatorio"),
   body("description")
@@ -93,6 +103,7 @@ router.put(
 
 router.delete(
   "/:projectId/tasks/:taskId",
+  hasAuthorization,
   param("taskId").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   TaskController.deleteTask
@@ -104,6 +115,30 @@ router.post(
   body("status").notEmpty().withMessage("El estado es obligatorio"),
   handleInputErrors,
   TaskController.updateStatus
+);
+
+//Routes for teams
+router.post(
+  "/:projectId/team/find",
+  body("email").isEmail().toLowerCase().withMessage("E-mail no válido"),
+  handleInputErrors,
+  TeamMemberController.findMemberByEmail
+);
+
+router.get("/:projectId/team", TeamMemberController.getProjectTeam);
+
+router.post(
+  "/:projectId/team",
+  body("id").isMongoId().withMessage("ID No válido"),
+  handleInputErrors,
+  TeamMemberController.addMemberById
+);
+
+router.delete(
+  "/:projectId/team/:userId",
+  param("userId").isMongoId().withMessage("ID No válido"),
+  handleInputErrors,
+  TeamMemberController.removeMemberById
 );
 
 export default router;

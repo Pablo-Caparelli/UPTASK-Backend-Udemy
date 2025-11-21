@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
 import { checkPassword, hashPassword } from "../utils/auth";
 import Token from "../models/Token";
 import { generateToken } from "../utils/token";
@@ -70,13 +70,16 @@ export class AuthController {
   static login = async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
-      const user = await User.findOne({ email });
+      const user = (await User.findOne({ email }).exec()) as IUser | null;
+      //const user = await User.findOne({ email });
       if (!user) {
         const error = new Error("Usuario no encontrado");
         return res.status(404).json({ error: error.message });
       }
 
       if (!user.confirmed) {
+        const userId = user._id.toString();
+
         const token = new Token();
         token.user = user.id;
         token.token = generateToken();
@@ -172,7 +175,7 @@ export class AuthController {
         token: token.token,
       });
 
-      res.send("Revisa tu email para instruccciones");
+      res.send("Revisa tu e-mail para instrucciones");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
@@ -211,5 +214,9 @@ export class AuthController {
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
+  };
+
+  static user = async (req: Request, res: Response) => {
+    return res.json(req.user);
   };
 }

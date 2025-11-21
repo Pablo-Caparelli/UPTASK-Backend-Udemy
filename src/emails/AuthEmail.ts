@@ -30,7 +30,7 @@ export class AuthEmail {
   static sendPasswordResetToken = async (user: IEmail) => {
     //Enviar E-mail
     const info = await transporter.sendMail({
-      from: "Uptask <admin@uptask.com>", // ← coma agregada aquí
+      from: "Uptask <admin@uptask.com>",
       to: user.email,
       subject: "Uptask - Restablece tu password",
       text: "Uptask - Restablece tu password",
